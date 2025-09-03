@@ -24,7 +24,6 @@ class UserDetailsProvider with ChangeNotifier {
 
     // await Future.delayed(const Duration(seconds: 4));
 
-
     /*Check if id not found or invalid*/
     int? userId = this.userId;
     if(userId == null){
@@ -34,15 +33,16 @@ class UserDetailsProvider with ChangeNotifier {
 
     var result  = await _getUserDetailsUseCase.execute(userId);
 
-    var model = result.data;
-
-    /*check if data not found*/
-    if(model == null){
-      updateState(UserDetailsStateDataNotFound());
-      return;
-    }
-
     if(result.isSuccess){
+
+      var model = result.data;
+
+      /*check if data not found*/
+      if(model == null){
+        updateState(UserDetailsStateDataNotFound());
+        return;
+      }
+
       var uiState = UserDetailsUiState(
         id: model.id,
         email: model.email,

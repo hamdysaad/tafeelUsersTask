@@ -1,18 +1,18 @@
 import 'package:tafael_task_tlutter_app/data/datasources/remote/requests/GetUsersListRequest.dart';
 import 'package:tafael_task_tlutter_app/data/datasources/remote/responses/get_user_details_response.dart';
-
 import 'base/api_service.dart';
 import 'base/end_points.dart';
 import 'requests/get_user_details_request.dart';
 import 'responses/get_users_list_response.dart';
 
 class UsersRemoteDatasource {
+
   final ApiService apiService;
 
   UsersRemoteDatasource(this.apiService);
 
   Future<GetUsersListResponse> getUsersList(GetUsersListRequest request) async {
-    // return GetUsersListResponse.fromJson(responseDummy);
+    return GetUsersListResponse.fromJson(responseDummy);
     var response = await apiService.getInstance().get(
       EndPoints.getUsersList,
       queryParameters: request.toJson(),

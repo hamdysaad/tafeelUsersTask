@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tafael_task_tlutter_app/presentation/routers/app_navigator.dart';
 import 'package:tafael_task_tlutter_app/presentation/ui_states/user_item_ui_state.dart';
+import 'package:tafael_task_tlutter_app/presentation/widgets/app_empty_widget.dart';
+import 'package:tafael_task_tlutter_app/presentation/widgets/app_error_widget.dart';
+import 'package:tafael_task_tlutter_app/presentation/widgets/app_loading_widget.dart';
 
 import '../providers/user_list_provider.dart';
 import '../states/users_list_state.dart';
@@ -38,22 +41,29 @@ class _UserListScreenState extends State<UserListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Users'), centerTitle: true,),
-      body: Consumer<UserListProvider>(
-        builder: (context, prov, _) {
-          var state = prov.state;
-          switch(state){
-            case UsersListStateLoading(): return _loading();
-            case UsersListStateSuccess(): return _success(state);
-            case UsersListStateError(): return _error(state);
-          }
-          return Container();
-        },
+      body: SizedBox(
+        width: double.infinity,
+        height: double.infinity,
+        child: Consumer<UserListProvider>(
+          builder: (context, prov, _) {
+            var state = prov.state;
+            switch(state){
+              case UsersListStateLoading(): return _loading();
+              case UsersListStateSuccess(): return _success(state);
+              case UsersListStateError(): return _error(state);
+            }
+            return Container();
+          },
+        ),
       ),
     );
   }
 
   Widget _loading() {
-    return const Center(child: CircularProgressIndicator());
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: AppLoadingWidget(),
+    );
   }
 
   Widget _success(UsersListStateSuccess state) {
@@ -74,11 +84,14 @@ class _UserListScreenState extends State<UserListScreen> {
   }
 
   Widget _error(UsersListStateError state) {
-    return Center(child: Text('Error: ${state.exception}'));
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: AppErrorWidget('Error: ${state.exception}'),
+    );
   }
 
   Widget _emptyView() {
-    return const Center(child: Text('No users found'));
+    return const Center(child: AppEmptyWidget('No users found'));
   }
 
   onUserItemClick(UserItemUiState uiState) {

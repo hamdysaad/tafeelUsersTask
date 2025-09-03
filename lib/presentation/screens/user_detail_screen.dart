@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tafael_task_tlutter_app/presentation/ui_states/user_details_ui_state.dart';
+import 'package:tafael_task_tlutter_app/presentation/widgets/app_error_widget.dart';
+import 'package:tafael_task_tlutter_app/presentation/widgets/app_loading_widget.dart';
 import 'package:tafael_task_tlutter_app/presentation/widgets/user_avatar_widget.dart';
 import 'package:tafael_task_tlutter_app/presentation/widgets/user_email_widget.dart';
 import 'package:tafael_task_tlutter_app/presentation/widgets/user_full_name_widget.dart';
@@ -22,16 +24,20 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create:
-          (context) => UserDetailsProvider(sl<GetUserDetailsUseCase>(), widget.userId)..initLoadUserDetails(),
+      create: (context) => UserDetailsProvider(sl<GetUserDetailsUseCase>(), widget.userId)..initLoadUserDetails(),
       child: Scaffold(
         appBar: AppBar(title: const Text('User Detail'), centerTitle: true),
-        body: _body(),
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          padding: const EdgeInsets.all(20.0),
+          child: _body(),
+        ),
       ),
     );
   }
 
-  _body() {
+  Widget _body() {
     return Consumer<UserDetailsProvider>(
       builder: (context, provider, _) {
         var state = provider.state;
@@ -42,6 +48,8 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
             return _invalidParam(state);
           case UserDetailsStateDataNotFound():
             return _datNotFound(state);
+          case UserDetailsStateError():
+            return _error(state);
           case UserDetailsStateSuccess():
             return _content(state);
         }
@@ -50,28 +58,28 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     );
   }
 
+  _content(UserDetailsStateSuccess state) {
+    var uiState = state.uiState;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 20,
+      children: [_avatar(uiState), _name(uiState), _email(uiState)],
+    );
+  }
+
   _loading() {
-    return Center(child: CircularProgressIndicator());
+    return AppLoadingWidget();
   }
 
   _invalidParam(UserDetailsStateInvalidParam state) {
-    return Center(child: Text('Invalid Param'));
+    return Center(child: AppErrorWidget('Invalid Param'));
   }
 
   _datNotFound(UserDetailsStateDataNotFound state) {
-    return Center(child: Text('User Detail not found'));
+    return Center(child: AppErrorWidget('User Detail not found'));
   }
 
-  _content(UserDetailsStateSuccess state) {
-    var uiState = state.uiState;
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        spacing: 20,
-        children: [_avatar(uiState), _name(uiState), _email(uiState)],
-      ),
-    );
-  }
+
 
   _avatar(UserDetailsUiState uiState) {
     return UserAvatarWidget(url: uiState.avatar , radius: 60,);
@@ -83,5 +91,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
 
   _name(UserDetailsUiState uiState) {
     return UserFullNameWidget(firstName: uiState.firstName, lastName: uiState.lastName);
+  }
+
+  Widget _error(UserDetailsStateError state) {
+    return AppErrorWidget("Error ${state.exception}");
   }
 }
