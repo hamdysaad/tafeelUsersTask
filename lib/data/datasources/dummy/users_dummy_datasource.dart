@@ -9,6 +9,7 @@ import '../remote/responses/get_users_list_response.dart';
 class UsersDummyDatasource extends UsersDataSource{
 
   List<Map<String, dynamic>>  dummyData = [];
+
   List<String> imagesUrls = [
     "https://reqres.in/img/faces/7-image.jpg",
     "https://reqres.in/img/faces/8-image.jpg",
@@ -16,7 +17,6 @@ class UsersDummyDatasource extends UsersDataSource{
     "https://reqres.in/img/faces/10-image.jpg",
     "https://reqres.in/img/faces/11-image.jpg",
     "https://reqres.in/img/faces/12-image.jpg",
-
   ];
 
   UsersDummyDatasource(){
@@ -52,7 +52,7 @@ class UsersDummyDatasource extends UsersDataSource{
       );
     }
 
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(milliseconds: 500));
 
     var responseDummy = {
       "page": page,
@@ -67,6 +67,10 @@ class UsersDummyDatasource extends UsersDataSource{
 
   @override
   Future<GetUserDetailsResponse> getUserDetails(GetUserDetailsRequest request) async {
+    Map<String, dynamic> item  = dummyData.firstWhere((element) => element['id'] ==  request.id);
+    var detailsResponseDummy = {
+      "data": item,
+    };
     return GetUserDetailsResponse.fromJson(detailsResponseDummy);
   }
 }

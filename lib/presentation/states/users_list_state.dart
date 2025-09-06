@@ -6,7 +6,26 @@ class UsersListStateLoading extends UsersListState {}
 
 class UsersListStateSuccess extends UsersListState {
   final List<UserItemUiState> uiState;
-  UsersListStateSuccess({required this.uiState});
+  final bool isLoadingMore;
+  final bool hasNextPage;
+
+  UsersListStateSuccess({
+    required this.uiState,
+    this.isLoadingMore = false,
+    this.hasNextPage = true,
+  });
+
+  UsersListStateSuccess copyWith({
+    List<UserItemUiState>? uiState,
+    bool? isLoadingMore,
+    bool? hasNextPage,
+  }) {
+    return UsersListStateSuccess(
+      uiState: uiState ?? this.uiState,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      hasNextPage: hasNextPage ?? this.hasNextPage,
+    );
+  }
 }
 
 class UsersListStateError extends UsersListState {

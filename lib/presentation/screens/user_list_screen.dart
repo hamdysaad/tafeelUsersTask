@@ -29,12 +29,14 @@ class _UserListScreenState extends State<UserListScreen> {
      provider.initLoadUsers();
 
     _controller.addListener(() {
-      if (
-      _controller.position.pixels >= _controller.position.maxScrollExtent - 150 &&
-          !provider.isLoadingMore &&
-          provider.hasNextPage
-      ) {
-        provider.loadMore();
+      var state = provider.state;
+      if(state is UsersListStateSuccess){
+        var isLoadingMore = _controller.position.pixels >= _controller.position.maxScrollExtent - 150 &&
+            !state.isLoadingMore &&
+            state.hasNextPage;
+          if(isLoadingMore){
+            provider.loadMore();
+          }
       }
     });
   }
@@ -76,9 +78,9 @@ class _UserListScreenState extends State<UserListScreen> {
 
     return ListView.builder(
       controller: _controller,
-      itemCount: uiStates.length +( prov.isLoadingMore ? 1 : 0),
+      itemCount: uiStates.length +( state.isLoadingMore ? 1 : 0),
       itemBuilder: (context, index) {
-        if(index == uiStates.length && prov.isLoadingMore) {
+        if(index == uiStates.length && state.isLoadingMore) {
           return _loading();
         }
         var uiState = uiStates[index];

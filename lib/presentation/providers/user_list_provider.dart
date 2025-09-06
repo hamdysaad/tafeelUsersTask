@@ -14,15 +14,9 @@ class UserListProvider with ChangeNotifier {
   UserListProvider(this._getUsersUseCase);
 
   UsersListState state = UsersListStateLoading();
-
-  bool isLoadingMore = false;
-  bool hasNextPage = true;
   int _page = 1;
 
   Future<void> initLoadUsers() async {
-
-    // await Future.delayed(const Duration(seconds: 4));
-
     _page = 1;
     var result  = await _getUsersUseCase.execute(_page);
     if(result.isSuccess){
@@ -42,16 +36,19 @@ class UserListProvider with ChangeNotifier {
     _page++;
     var state = this.state;
     if(state is UsersListStateSuccess){
-      isLoadingMore = true;
-      notifyListeners();
+      updateState(state.copyWith(isLoadingMore: true));
       var result  = await _getUsersUseCase.execute(_page);
       if(result.isSuccess){
         var uiStates = _getUsersUiStateFromApiModel(result.data);
         var allItems = state.uiState;
         allItems.addAll(uiStates);
-        isLoadingMore = false;
-        hasNextPage = uiStates.isNotEmpty;
-        updateState(UsersListStateSuccess(uiState: allItems));
+
+        updateState(state.copyWith(
+          uiState: allItems,
+          isLoadingMore: false,
+          hasNextPage: uiStates.isNotEmpty,
+        ));
+
         return;
       }
 
