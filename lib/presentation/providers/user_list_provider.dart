@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:tafael_task_tlutter_app/domain/models/user_list_item_model.dart';
 import 'package:tafael_task_tlutter_app/domain/usecases/get_users_list_use_case.dart';
 
 import '../states/users_list_state.dart';
@@ -14,34 +15,58 @@ class UserListProvider with ChangeNotifier {
 
   UsersListState state = UsersListStateLoading();
 
+  bool isLoadingMore = false;
+  bool hasNextPage = true;
   int _page = 1;
-
 
   Future<void> initLoadUsers() async {
 
     // await Future.delayed(const Duration(seconds: 4));
 
     _page = 1;
-
     var result  = await _getUsersUseCase.execute(_page);
-
     if(result.isSuccess){
-      var uiStates = result.data?.map((e) => UserItemUiState(
-        id: e.id,
-        email: e.email,
-        firstName: e.firstName,
-        lastName: e.lastName,
-        avatar: e.avatar,
-      )).toList() ?? List.empty();
+      var uiStates = _getUsersUiStateFromApiModel(result.data);
       updateState(UsersListStateSuccess(uiState: uiStates));
       return;
     }
-
     updateState(UsersListStateError(result.error!));
   }
 
   void updateState(UsersListState state) {
     this.state = state;
     notifyListeners();
+  }
+
+  Future<void> loadMore() async {
+    _page++;
+    var state = this.state;
+    if(state is UsersListStateSuccess){
+      isLoadingMore = true;
+      notifyListeners();
+      var result  = await _getUsersUseCase.execute(_page);
+      if(result.isSuccess){
+        var uiStates = _getUsersUiStateFromApiModel(result.data);
+        var allItems = state.uiState;
+        allItems.addAll(uiStates);
+        isLoadingMore = false;
+        hasNextPage = uiStates.isNotEmpty;
+        updateState(UsersListStateSuccess(uiState: allItems));
+        return;
+      }
+
+      updateState(UsersListStateError(result.error!));
+    }
+
+  }
+
+  List<UserItemUiState> _getUsersUiStateFromApiModel(List<UserListItemModel>? data) {
+    return data?.map((e) => UserItemUiState(
+      id: e.id,
+      email: e.email,
+      firstName: e.firstName,
+      lastName: e.lastName,
+      avatar: e.avatar,
+    )).toList() ?? List.empty();
   }
 }

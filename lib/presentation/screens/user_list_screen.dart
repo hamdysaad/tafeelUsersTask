@@ -28,13 +28,15 @@ class _UserListScreenState extends State<UserListScreen> {
     final provider = context.read<UserListProvider>();
      provider.initLoadUsers();
 
-    // _controller.addListener(() {
-    //   if (_controller.position.pixels >=
-    //       _controller.position.maxScrollExtent - 150 &&
-    //       !provider.isLoading) {
-    //     provider.loadUsers(loadMore: true);
-    //   }
-    // });
+    _controller.addListener(() {
+      if (
+      _controller.position.pixels >= _controller.position.maxScrollExtent - 150 &&
+          !provider.isLoadingMore &&
+          provider.hasNextPage
+      ) {
+        provider.loadMore();
+      }
+    });
   }
 
   @override
@@ -49,7 +51,7 @@ class _UserListScreenState extends State<UserListScreen> {
             var state = prov.state;
             switch(state){
               case UsersListStateLoading(): return _loading();
-              case UsersListStateSuccess(): return _success(state);
+              case UsersListStateSuccess(): return _success(state , prov);
               case UsersListStateError(): return _error(state);
             }
             return Container();
@@ -66,17 +68,19 @@ class _UserListScreenState extends State<UserListScreen> {
     );
   }
 
-  Widget _success(UsersListStateSuccess state) {
+  Widget _success(UsersListStateSuccess state, UserListProvider prov) {
 
     /*check if empty list*/
     var uiStates = state.uiState;
     if(uiStates.isEmpty) return _emptyView();
 
-
     return ListView.builder(
       controller: _controller,
-      itemCount: uiStates.length,
+      itemCount: uiStates.length +( prov.isLoadingMore ? 1 : 0),
       itemBuilder: (context, index) {
+        if(index == uiStates.length && prov.isLoadingMore) {
+          return _loading();
+        }
         var uiState = uiStates[index];
         return UserItemWidget(uiState: uiState, onItemClick: onUserItemClick,);
       },
