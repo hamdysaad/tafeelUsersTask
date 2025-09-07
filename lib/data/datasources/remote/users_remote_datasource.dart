@@ -14,16 +14,20 @@ class UsersRemoteDatasource extends UsersDataSource{
 
   @override
   Future<GetUsersListResponse> getUsersList(GetUsersListRequest request) async {
+
+    final map = <String, dynamic>{};
+    map['page'] = 2;
+
     var response = await apiService.getInstance().get(
       EndPoints.getUsersList,
-      queryParameters: request.toJson(),
+      queryParameters: map,
     );
     return GetUsersListResponse.fromJson(response.data);
   }
 
   @override
   Future<GetUserDetailsResponse> getUserDetails(GetUserDetailsRequest request) async {
-    var response = await apiService.getInstance().get(EndPoints.getUserDetails(request.id));
+    var response = await apiService.getInstance().get(EndPoints.getUserDetails(2));
     return GetUserDetailsResponse.fromJson(response.data);
   }
 }
