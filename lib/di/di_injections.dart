@@ -27,7 +27,6 @@ class DiInjections {
     sl.registerLazySingleton<UserRepository>(() => UserRepositoryImpl(sl<UsersDataSource>()));
 
     /*Data sources*/
-    // sl.registerLazySingleton<UsersRemoteDatasource>(() => UsersRemoteDatasource(sl<ApiService>()));
     // sl.registerLazySingleton<UsersDataSource>(() => UsersRemoteDatasource(sl<ApiService>()));
     sl.registerLazySingleton<UsersDataSource>(() => UsersDummyDatasource());
 
