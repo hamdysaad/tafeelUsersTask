@@ -16,7 +16,7 @@ Tech Stack :
 
 How to Run:
     1 - Clone the repo:
-        - git clone https://github.com/yourusername/flutter_users_app.git
+        - git clone https://github.com/hamdysaad/tafeelUsersTask
         - cd flutter_users_app
     2- Run the app:
         - flutter run
