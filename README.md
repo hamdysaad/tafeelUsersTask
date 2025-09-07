@@ -1,16 +1,26 @@
-# tafael_task_tlutter_app
+Tafeel task Flutter app.
 
-Tafael task Flutter app.
+The project follows Clean Architecture:
+    - Data Layer: Handles API calls and maps JSON to models.
+    - Domain Layer: Defines abstract repositories and business rules.
+    - Presentation Layer: Contains UI and Providers (ViewModels).
+    - Dependency Injection: Implemented using provider + service locator pattern.
 
-## Getting Started
+Tech Stack :
+    - Flutter (3.29.1-stable)
+    - Provider – state management 
+    - Dio / Http – networking
+    - Get It – dependency injection
+    - Repository Pattern – data abstraction
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+How to Run:
+    1 - Clone the repo:
+        - git clone https://github.com/yourusername/flutter_users_app.git
+        - cd flutter_users_app
+    2- Run the app:
+        - flutter run
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+For any inquiries: hamdysaad506@gmail.com
